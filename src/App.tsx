@@ -1,10 +1,12 @@
-import React from "react";
-import { Input } from "./components";
+import React, { useState } from "react";
+import { BooksWrapper, Input } from "./components";
 
 function App() {
+  const [searchString, setSearchString] = useState<string>("");
   return (
     <div className="App">
-      <Input onSubmit={(a: string) => console.log(a)} />
+      <Input onSubmit={setSearchString} />
+      <BooksWrapper searchString={searchString} />
     </div>
   );
 }
