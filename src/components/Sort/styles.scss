@@ -1,0 +1,17 @@
+.sort {
+  display: flex;
+  gap: 4px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  align-items: center;
+  height: 30px;
+
+  &__select {
+    height: 30px;
+    padding: 0 5px;
+    background: #fffdfd;
+
+    border: 1px solid #ebe6e8;
+    border-radius: 10px;
+  }
+}

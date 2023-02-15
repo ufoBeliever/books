@@ -8,20 +8,24 @@ import { IResponse } from "../../models/types";
 
 export const BooksWrapper: React.FC<IBooksWrapperProps> = ({
   searchString,
+  sortBy,
 }) => {
   const [responseData, setResponseData] = useState<null | IResponse>(null);
   console.log(responseData);
 
   useEffect(() => {
-    axios
-      .get(
-        `${URL}?key=${process.env.REACT_APP_API_KEY}&maxResults=24` +
-          (searchString ? `&q=${searchString}` : "&q=btgrrrrfrgrrege5")
-      )
-      .then((e) => {
-        setResponseData(e.data);
-      });
-  }, [searchString]);
+    if (searchString) {
+      axios
+        .get(
+          `${URL}?key=${
+            process.env.REACT_APP_API_KEY
+          }&maxResults=24&q=${searchString}&orderBy=${sortBy.toLowerCase()}`
+        )
+        .then((e) => {
+          setResponseData(e.data);
+        });
+    }
+  }, [searchString, sortBy]);
   return responseData ? (
     <div className="books-wrapper">
       {responseData.items?.map((e, i) => {
