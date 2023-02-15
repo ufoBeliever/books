@@ -13,6 +13,7 @@
   }
 
   &__image {
+    object-fit: cover;
     width: 100px;
     height: 144px;
 
@@ -35,6 +36,7 @@
     font-size: 16px;
     line-height: 20px;
     color: #343232;
+    word-break: break-all;
   }
   &__author {
     font-family: Arial, Helvetica, sans-serif;
@@ -42,6 +44,7 @@
     font-weight: 400;
     font-size: 12px;
     line-height: 14px;
+    word-break: break-all;
 
     color: #514d4c;
   }

@@ -1,0 +1,7 @@
+.books-wrapper {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 20px;
+  width: min-content;
+  margin: 0 auto;
+}
