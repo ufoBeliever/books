@@ -4,31 +4,31 @@ import { URL } from "../../consts";
 import { Book } from "../Book";
 import { IBooksWrapperProps } from "./types";
 import "./styles.scss";
-import { IResponse } from "../../models/types";
+import { IBook } from "../../models/types";
+import { fetchAllElements } from "../../utils/index.";
 
 export const BooksWrapper: React.FC<IBooksWrapperProps> = ({
   searchString,
   sortBy,
 }) => {
-  const [responseData, setResponseData] = useState<null | IResponse>(null);
-  console.log(responseData);
+  const [responseData, setResponseData] = useState<IBook[]>([]);
 
   useEffect(() => {
     if (searchString) {
-      axios
-        .get(
-          `${URL}?key=${
-            process.env.REACT_APP_API_KEY
-          }&maxResults=24&q=${searchString}&orderBy=${sortBy.toLowerCase()}`
-        )
-        .then((e) => {
-          setResponseData(e.data);
-        });
+      fetchAllElements(
+        `${URL}?key=${
+          process.env.REACT_APP_API_KEY
+        }&q=${searchString}&orderBy=${sortBy.toLowerCase()}`,
+        40
+      ).then((e) => {
+        console.log(e);
+        setResponseData(e);
+      });
     }
   }, [searchString, sortBy]);
-  return responseData ? (
+  return responseData.length ? (
     <div className="books-wrapper">
-      {responseData.items?.map((e, i) => {
+      {responseData.map((e, i) => {
         return (
           <Book
             key={e.id + i}
