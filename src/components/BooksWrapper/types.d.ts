@@ -1,4 +1,5 @@
+import { IBook } from "../../models/types";
+
 export interface IBooksWrapperProps {
-  searchString: string;
-  sortBy: string;
+  responseData: IBook[];
 }

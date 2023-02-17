@@ -1,5 +1,6 @@
 import { IBookProps } from "./types";
 import "./styles.scss";
+import { cutStr } from "../../utils/index.";
 
 export const Book: React.FC<IBookProps> = ({
   title = "Unknown title",
@@ -7,12 +8,6 @@ export const Book: React.FC<IBookProps> = ({
   image = "",
   link = "",
 }) => {
-  const cutStr = (string: string, count: number) => {
-    return string.length > count
-      ? string.slice(0, count).trim() + "..."
-      : string;
-  };
-
   return (
     <a href={link}>
       <div className="book">
