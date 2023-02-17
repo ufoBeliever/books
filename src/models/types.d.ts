@@ -29,13 +29,20 @@ export interface IVolumeInfo {
   canonicalVolumeLink: string;
 }
 
+export interface IListPrice {
+  amount: number;
+  currencyCode: string;
+}
+
 export interface IBook {
   kind: string;
   id: string;
   etag: string;
   selfLink: string;
   volumeInfo: IVolumeInfo;
-  saleInfo: object;
+  saleInfo: {
+    listPrice: IListPrice;
+  };
   accessInfo: object;
   searchInfo: object;
 }

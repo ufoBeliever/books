@@ -9,7 +9,6 @@ export const Input: React.FC<IInputProps> = ({ onSubmit }) => {
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     onSubmit(value);
-    setValue("");
   };
 
   return (

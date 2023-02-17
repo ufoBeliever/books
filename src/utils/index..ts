@@ -1,4 +1,5 @@
 import axios from "axios";
+import { IBook } from "../models/types";
 
 export const fetchAllElements = async (url: string, limit: number) => {
   url += `&maxResults=${limit}`;
@@ -21,4 +22,16 @@ export const hasArrayIntersection = <T>(arr1: T[], arr2: T[]) => {
   }
 
   return false;
+};
+
+export const biggestPrice = (arr: IBook[]) => {
+  let biggestPriceValue = 0;
+  for (let el of arr) {
+    const currentPrice = el.saleInfo.listPrice?.amount;
+    if (biggestPriceValue < currentPrice) {
+      biggestPriceValue = currentPrice;
+    }
+  }
+
+  return biggestPriceValue;
 };
