@@ -50,33 +50,31 @@ function App() {
           filteredData = [...filteredData, el];
         }
       }
-      setFilteredData(
-        filteredData.filter((e) => {
-          return (e.saleInfo.listPrice?.amount || 0) <= currentPrice;
-        })
-      );
-      setMaxPrice(biggestPrice(filteredData));
+    } else {
+      filteredData = responseData;
+    }
+    setMaxPrice(biggestPrice(filteredData));
+    if (currentPrice === 0) {
+      setFilteredData(filteredData);
     } else {
       setFilteredData(
-        responseData.filter((e) => {
-          return (e.saleInfo.listPrice?.amount || 0) <= currentPrice;
+        filteredData.filter((e) => {
+          return e.saleInfo.listPrice?.amount <= currentPrice;
         })
       );
-      setMaxPrice(biggestPrice(responseData));
     }
-  }, [currentCategories, responseData, currentPrice]);
+  }, [currentCategories, responseData, currentPrice, allCategories]);
 
   useEffect(() => {
     setCurrentCategories([]);
     setFilteredData([]);
     setCurrentPrice(0);
-    setMaxPrice(0);
   }, [responseData]);
 
   return (
     <div className="App">
       <Input onSubmit={setSearchString} />
-      <Sort value={sortBy} setValue={setSortBy} />
+
       {!!maxPrice && (
         <Slider
           title="Price"
@@ -86,11 +84,14 @@ function App() {
         />
       )}
       {allCategories && (
-        <Categories
-          allCategories={allCategories}
-          currentCategories={currentCategories}
-          setCurrentCategories={setCurrentCategories}
-        />
+        <>
+          <Categories
+            allCategories={allCategories}
+            currentCategories={currentCategories}
+            setCurrentCategories={setCurrentCategories}
+          />
+          <Sort value={sortBy} setValue={setSortBy} />
+        </>
       )}
       <BooksWrapper responseData={filteredData} />
     </div>

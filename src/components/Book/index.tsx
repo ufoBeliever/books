@@ -9,7 +9,7 @@ export const Book: React.FC<IBookProps> = ({
   link = "",
 }) => {
   return (
-    <a href={link}>
+    <a href={link} target="_blank" rel="noreferrer">
       <div className="book">
         <img src={image} alt="Book cover" className="book__image" />
         <div className="book__text-wrapper">

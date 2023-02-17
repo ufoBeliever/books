@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./styles.scss";
 import { ICategoriesProps } from "./types";
 import { TiTick } from "react-icons/ti";
@@ -11,10 +11,6 @@ export const Categories: React.FC<ICategoriesProps> = ({
 }) => {
   const [isOpened, setIsOpened] = useState<boolean>(false);
   const allCategoriesArr = Array.from(allCategories);
-
-  useEffect(() => {
-    console.log(currentCategories);
-  }, [currentCategories]);
 
   const setCategory = (category: string) => {
     if (currentCategories.indexOf(category) === -1) {
@@ -41,10 +37,11 @@ export const Categories: React.FC<ICategoriesProps> = ({
           (isOpened ? "categories__wrapper_opened" : "")
         }
       >
-        {allCategoriesArr.map((e) => {
+        {allCategoriesArr.map((e, i) => {
           const isItemSelected = isSelected(e);
           return (
             <button
+              key={i}
               title={e}
               onClick={() => setCategory(e)}
               className={
