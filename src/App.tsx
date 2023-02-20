@@ -7,7 +7,8 @@ import {
   hasArrayIntersection,
 } from "./utils/index.";
 import { URL } from "./consts/index";
-import { Slider } from "./components/Slider";
+import { Slider } from "antd";
+import currencyFormatter from "currency-formatter";
 
 function App() {
   const [searchString, setSearchString] = useState<string>("");
@@ -16,8 +17,9 @@ function App() {
   const [allCategories, setALLCategories] = useState<Set<string> | null>(null);
   const [currentCategories, setCurrentCategories] = useState<string[]>([]);
   const [filteredData, setFilteredData] = useState<IBook[]>([]);
-  const [currentPrice, setCurrentPrice] = useState<number>(0);
+  const [currentPrice, setCurrentPrice] = useState<[number, number]>([0, 0]);
   const [maxPrice, setMaxPrice] = useState<number>(0);
+  const [currency, setCurrency] = useState<string>("");
 
   useEffect(() => {
     if (searchString) {
@@ -27,6 +29,16 @@ function App() {
         }&q=${searchString}&orderBy=${sortBy.toLowerCase()}`,
         40
       ).then((e: IBook[]) => {
+        for (let book of e) {
+          if (
+            book.saleInfo?.listPrice?.currencyCode !== currency &&
+            book.saleInfo?.listPrice?.currencyCode
+          ) {
+            console.log(currency, book.saleInfo.listPrice.currencyCode);
+            setCurrency(book.saleInfo.listPrice.currencyCode);
+            break;
+          }
+        }
         const categories = [...e.map((e) => e.volumeInfo.categories)];
         let categoriesList: string[] = [];
 
@@ -37,7 +49,7 @@ function App() {
         setResponseData(e);
       });
     }
-  }, [searchString, sortBy]);
+  }, [searchString, sortBy, currency]);
 
   useEffect(() => {
     let filteredData: IBook[] = [];
@@ -54,34 +66,45 @@ function App() {
       filteredData = responseData;
     }
     setMaxPrice(biggestPrice(filteredData));
-    if (currentPrice === 0) {
+    if (currentPrice[0] === 0 && currentPrice[1] === maxPrice) {
       setFilteredData(filteredData);
     } else {
       setFilteredData(
         filteredData.filter((e) => {
-          return e.saleInfo.listPrice?.amount <= currentPrice;
+          return (
+            e.saleInfo.listPrice?.amount <= currentPrice[1] &&
+            e.saleInfo.listPrice?.amount >= currentPrice[0]
+          );
         })
       );
     }
-  }, [currentCategories, responseData, currentPrice, allCategories]);
+  }, [currentCategories, responseData, currentPrice, allCategories, maxPrice]);
 
   useEffect(() => {
     setCurrentCategories([]);
     setFilteredData([]);
-    setCurrentPrice(0);
-  }, [responseData]);
+    setCurrentPrice([0, maxPrice]);
+  }, [responseData, maxPrice]);
 
   return (
     <div className="App">
       <Input onSubmit={setSearchString} />
 
       {!!maxPrice && (
-        <Slider
-          title="Price"
-          value={currentPrice}
-          setValue={setCurrentPrice}
-          range={[0, maxPrice]}
-        />
+        <>
+          <Slider
+            range
+            value={currentPrice}
+            defaultValue={[0, maxPrice]}
+            max={maxPrice}
+            min={0}
+            onChange={(a: any) => {
+              setCurrentPrice(a);
+            }}
+          />
+          {currencyFormatter.format(currentPrice[0], { code: currency })},
+          {currencyFormatter.format(currentPrice[1], { code: currency })}
+        </>
       )}
       {allCategories && (
         <>
