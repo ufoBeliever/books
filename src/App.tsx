@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BooksWrapper, Categories, Input, Sort } from "./components";
+import { BooksWrapper, Categories, Filter, Input, Sort } from "./components";
 import { IBook } from "./models/types";
 import {
   biggestPrice,
@@ -20,13 +20,18 @@ function App() {
   const [currentPrice, setCurrentPrice] = useState<[number, number]>([0, 0]);
   const [maxPrice, setMaxPrice] = useState<number>(0);
   const [currency, setCurrency] = useState<string>("");
+  const [currentEBooksFilter, setCurrentEBooksFilter] = useState<
+    "free-ebooks" | "paid-ebooks" | ""
+  >("");
 
   useEffect(() => {
     if (searchString) {
       fetchAllElements(
         `${URL}?key=${
           process.env.REACT_APP_API_KEY
-        }&q=${searchString}&orderBy=${sortBy.toLowerCase()}`,
+        }&q=${searchString}&orderBy=${sortBy.toLowerCase()}${
+          currentEBooksFilter ? `&filter=${currentEBooksFilter}` : ""
+        }`,
         40
       ).then((e: IBook[]) => {
         for (let book of e) {
@@ -49,7 +54,7 @@ function App() {
         setResponseData(e);
       });
     }
-  }, [searchString, sortBy, currency]);
+  }, [searchString, sortBy, currency, currentEBooksFilter]);
 
   useEffect(() => {
     let filteredData: IBook[] = [];
@@ -90,6 +95,11 @@ function App() {
     <div className="App">
       <Input onSubmit={setSearchString} />
 
+      <Filter
+        allValues={["free-ebooks", "paid-ebooks", ""]}
+        value={currentEBooksFilter}
+        setFilter={setCurrentEBooksFilter}
+      />
       {!!maxPrice && (
         <>
           <Slider

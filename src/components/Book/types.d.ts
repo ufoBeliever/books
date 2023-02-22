@@ -3,4 +3,7 @@ export interface IBookProps {
   author: string;
   image: string;
   link: string;
+  publishDate: string;
+  price?: number | null;
+  currency?: string;
 }

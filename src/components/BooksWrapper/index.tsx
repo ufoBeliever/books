@@ -10,6 +10,9 @@ export const BooksWrapper: React.FC<IBooksWrapperProps> = ({
       {responseData.map((e, i) => {
         return (
           <Book
+            currency={e.saleInfo?.listPrice?.currencyCode}
+            publishDate={e.volumeInfo.publishedDate}
+            price={e.saleInfo?.listPrice?.amount}
             key={e.id + i}
             link={e.volumeInfo.previewLink}
             title={e.volumeInfo.title}
