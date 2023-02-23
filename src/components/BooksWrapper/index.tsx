@@ -8,16 +8,19 @@ export const BooksWrapper: React.FC<IBooksWrapperProps> = ({
   return responseData.length ? (
     <div className="books-wrapper">
       {responseData.map((e, i) => {
+        const { saleInfo, volumeInfo, id } = e;
+        const { publishedDate, previewLink, title, authors, imageLinks } =
+          volumeInfo;
         return (
           <Book
-            currency={e.saleInfo?.listPrice?.currencyCode}
-            publishDate={e.volumeInfo.publishedDate}
-            price={e.saleInfo?.listPrice?.amount}
-            key={e.id + i}
-            link={e.volumeInfo.previewLink}
-            title={e.volumeInfo.title}
-            author={e.volumeInfo.authors?.join(", ")}
-            image={e.volumeInfo.imageLinks?.thumbnail}
+            currency={saleInfo?.listPrice?.currencyCode}
+            publishDate={publishedDate}
+            price={saleInfo?.listPrice?.amount}
+            key={id + i}
+            link={previewLink}
+            title={title}
+            author={authors?.join(", ")}
+            image={imageLinks?.thumbnail}
           />
         );
       })}
