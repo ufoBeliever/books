@@ -1,3 +1,3 @@
 export interface IInputProps {
-  onSubmit: (a: string) => any;
+  onSubmit: (a: string) => void;
 }

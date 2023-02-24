@@ -110,7 +110,7 @@ function App() {
             defaultValue={[0, maxPrice]}
             max={maxPrice}
             min={0}
-            onChange={(a: any) => {
+            onChange={(a: [number, number]) => {
               setCurrentPrice(a);
             }}
           />
