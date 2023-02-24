@@ -37,23 +37,33 @@ export const Categories: React.FC<ICategoriesProps> = ({
           (isOpened ? "categories__wrapper_opened" : "")
         }
       >
-        {allCategoriesArr.map((e, i) => {
-          const isItemSelected = isSelected(e);
-          return (
-            <button
-              key={i}
-              title={e}
-              onClick={() => setCategory(e)}
-              className={
-                "categories__item " +
-                (isItemSelected ? "categories__item_selected" : "")
-              }
-            >
-              {cutStr(e, 17)}
-              {isItemSelected && <TiTick size="14px" color="#8E2912" />}
-            </button>
-          );
-        })}
+        {allCategoriesArr
+          .sort((a, b) => {
+            if (a < b) {
+              return -1;
+            }
+            if (a > b) {
+              return 1;
+            }
+            return 0;
+          })
+          .map((e, i) => {
+            const isItemSelected = isSelected(e);
+            return (
+              <button
+                key={i}
+                title={e}
+                onClick={() => setCategory(e)}
+                className={
+                  "categories__item " +
+                  (isItemSelected ? "categories__item_selected" : "")
+                }
+              >
+                {cutStr(e, 17)}
+                {isItemSelected && <TiTick size="14px" color="#8E2912" />}
+              </button>
+            );
+          })}
       </div>
     </div>
   );

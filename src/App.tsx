@@ -39,7 +39,6 @@ function App() {
             book.saleInfo?.listPrice?.currencyCode !== currency &&
             book.saleInfo?.listPrice?.currencyCode
           ) {
-            console.log(currency, book.saleInfo.listPrice.currencyCode);
             setCurrency(book.saleInfo.listPrice.currencyCode);
             break;
           }
@@ -88,8 +87,11 @@ function App() {
   useEffect(() => {
     setCurrentCategories([]);
     setFilteredData([]);
+  }, [responseData]);
+
+  useEffect(() => {
     setCurrentPrice([0, maxPrice]);
-  }, [responseData, maxPrice]);
+  }, [maxPrice]);
 
   return (
     <div className="App">
