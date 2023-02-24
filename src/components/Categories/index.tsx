@@ -25,12 +25,20 @@ export const Categories: React.FC<ICategoriesProps> = ({
 
   return (
     <div className="categories">
-      <button
+      <div
         className="categories__title"
         onClick={() => setIsOpened((prev) => !prev)}
       >
-        Set categories
-      </button>
+        <span>Set categories</span>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setCurrentCategories([]);
+          }}
+        >
+          Reset
+        </button>
+      </div>
       <div
         className={
           "categories__wrapper " +
