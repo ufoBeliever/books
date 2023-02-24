@@ -6,7 +6,6 @@ export const Filter: React.FC<IFilterProps> = ({
   value,
   allValues,
 }) => {
-  console.log(value);
   return (
     <div>
       {allValues.map((e, i) => {
