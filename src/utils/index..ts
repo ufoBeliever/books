@@ -35,3 +35,10 @@ export const biggestPrice = (arr: IBook[]) => {
 
   return biggestPriceValue;
 };
+
+export const bringDateToValid = (date: string): string => {
+  if (isNaN(Date.parse(date))) {
+    return date.split("-").filter((e) => e.length === 4)[0];
+  }
+  return date;
+};

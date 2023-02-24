@@ -3,6 +3,7 @@ import { BooksWrapper, Categories, Filter, Input, Sort } from "./components";
 import { IBook } from "./models/types";
 import {
   biggestPrice,
+  bringDateToValid,
   fetchAllElements,
   hasArrayIntersection,
 } from "./utils/index.";
@@ -30,11 +31,7 @@ function App() {
   useEffect(() => {
     if (searchString) {
       fetchAllElements(
-        `${URL}?key=${
-          process.env.REACT_APP_API_KEY
-        }&q=${searchString}&orderBy=${sortBy.toLowerCase()}${
-          currentEBooksFilter ? `&filter=${currentEBooksFilter}` : ""
-        }`,
+        `${URL}?key=${process.env.REACT_APP_API_KEY}&q=${searchString}`,
         40
       ).then((e: IBook[]) => {
         const categories = [
@@ -45,11 +42,11 @@ function App() {
         for (let el of categories) {
           categoriesList = [...categoriesList, ...(el ? el : [])];
         }
-        setALLCategories(new Set([...categoriesList, ...currentCategories]));
+        setALLCategories(new Set([...categoriesList]));
         setResponseData(e);
       });
     }
-  }, [searchString, sortBy, currentEBooksFilter, currentCategories]);
+  }, [searchString]);
 
   useEffect(() => {
     for (let book of responseData) {
@@ -83,6 +80,40 @@ function App() {
     } else {
       filteredData = responseData;
     }
+    if (sortBy === "Newest") {
+      filteredData = [
+        ...filteredData
+          .filter((e) => e.volumeInfo.publishedDate)
+          .sort((el1, el2) => {
+            return (
+              new Date(
+                bringDateToValid(el2.volumeInfo.publishedDate)
+              ).getTime() -
+              new Date(bringDateToValid(el1.volumeInfo.publishedDate)).getTime()
+            );
+          }),
+        ...filteredData.filter((e) => !e.volumeInfo.publishedDate),
+      ];
+    }
+
+    switch (currentEBooksFilter) {
+      case "free-ebooks":
+        setMaxCurrentPrice(0);
+        filteredData = filteredData.filter(
+          (e) => e.saleInfo?.saleability === "FREE"
+        );
+
+        break;
+      case "paid-ebooks":
+        setMaxCurrentPrice(biggestPrice(filteredData));
+        filteredData = filteredData.filter(
+          (e) => e.saleInfo?.listPrice?.amount
+        );
+        break;
+      default:
+        setMaxCurrentPrice(biggestPrice(filteredData));
+    }
+
     setMaxPrice(biggestPrice(filteredData));
     if (minCurrentPrice === 0 && maxCurrentPrice === maxPrice) {
       setFilteredData(filteredData);
@@ -97,6 +128,8 @@ function App() {
       );
     }
   }, [
+    currentEBooksFilter,
+    sortBy,
     currentCategories,
     responseData,
     maxCurrentPrice,

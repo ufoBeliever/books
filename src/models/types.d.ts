@@ -42,6 +42,7 @@ export interface IBook {
   volumeInfo: IVolumeInfo;
   saleInfo: {
     listPrice: IListPrice;
+    saleability: string;
   };
   accessInfo: object;
   searchInfo: object;
