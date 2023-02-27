@@ -6,4 +6,5 @@ export interface IBookProps {
   publishDate: string;
   price?: number | null;
   currency?: string;
+  isFree?: boolean;
 }

@@ -1,0 +1,22 @@
+.filter {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  &__button {
+    padding: 5px;
+    border-radius: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+    border: 1px solid transparent;
+    background: transparent;
+    transition: background 0.3s;
+
+    &:hover {
+      background: rgb(242, 242, 242);
+    }
+
+    &_checked {
+      border-color: #514d4c;
+    }
+  }
+}

@@ -1,0 +1,54 @@
+.book {
+  width: 305px;
+  padding: 10px;
+  background: white;
+  border-radius: 10px;
+  font-family: Arial, Helvetica, sans-serif;
+  border: 1px solid #514d4c;
+  transition: background 0.3s;
+
+  &:hover {
+    background: rgb(242, 242, 242);
+  }
+
+  &__text-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__main {
+    display: flex;
+    gap: 20px;
+  }
+
+  &__image {
+    width: 100px;
+    height: 104px;
+    border-radius: 10px;
+    object-fit: cover;
+  }
+
+  &__title {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 20px;
+    color: black;
+  }
+
+  &__price {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    color: black;
+  }
+
+  &__author {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 14px;
+    color: #514d4c;
+  }
+}

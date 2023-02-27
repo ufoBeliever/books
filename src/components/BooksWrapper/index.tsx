@@ -19,6 +19,7 @@ export const BooksWrapper: React.FC<IBooksWrapperProps> = ({ data }) => {
             title={title}
             author={authors?.join(", ")}
             image={imageLinks?.thumbnail}
+            isFree={saleInfo.saleability === "FREE"}
           />
         );
       })}

@@ -13,5 +13,12 @@
 
     border: 1px solid #ebe6e8;
     border-radius: 10px;
+    transition: background 0.3s;
+
+    &:hover {
+      background: rgb(242, 242, 242);
+    }
+
+    cursor: pointer;
   }
 }
