@@ -1,7 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { BooksWrapper, Categories, Filter, Input, Sort } from "./components";
 import { IBook } from "./models/types";
-import { biggestPrice, hasArrayIntersection } from "./utils/index.";
+import {
+  biggestPrice,
+  conditionClassName,
+  hasArrayIntersection,
+} from "./utils/index.";
 import { URL } from "./consts/index";
 import { Slider } from "antd";
 import currencyFormatter from "currency-formatter";
@@ -206,15 +210,13 @@ function App() {
       );
     }
 
-    if (data) {
-      return filteredData.length ? (
-        <BooksWrapper data={filteredData} />
-      ) : (
-        <div className="content-center">
-          <span className="notification">No items found</span>
-        </div>
-      );
-    }
+    return filteredData.length ? (
+      <BooksWrapper data={filteredData} />
+    ) : (
+      <div className="content-center">
+        <span className="notification">No items found</span>
+      </div>
+    );
   };
 
   return (
@@ -243,9 +245,9 @@ function App() {
           <Input onSubmit={setSearchString} />
         </header>
         <div
-          className={["filters", areFiltersOpened && "filters__opened"]
-            .filter((e) => e)
-            .join(" ")}
+          className={
+            "filters " + conditionClassName("filters__opened", areFiltersOpened)
+          }
         >
           <div className="filters__small">
             {!!availableCategories?.size && (

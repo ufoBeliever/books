@@ -1,14 +1,14 @@
 .book {
   width: 305px;
   padding: 10px;
-  background: white;
+  background: var(--white);
   border-radius: 10px;
   font-family: Arial, Helvetica, sans-serif;
-  border: 1px solid #514d4c;
+  border: 1px solid var(--brown);
   transition: background 0.3s;
 
   &:hover {
-    background: rgb(242, 242, 242);
+    background: var(--gray);
   }
 
   &__text-wrapper {
@@ -34,14 +34,14 @@
     font-weight: 500;
     font-size: 16px;
     line-height: 20px;
-    color: black;
+    color: var(--black);
   }
 
   &__price {
     font-style: normal;
     font-weight: 500;
     font-size: 18px;
-    color: black;
+    color: var(--black);
   }
 
   &__author {
@@ -49,6 +49,6 @@
     font-weight: 400;
     font-size: 12px;
     line-height: 14px;
-    color: #514d4c;
+    color: var(--brown);
   }
 }

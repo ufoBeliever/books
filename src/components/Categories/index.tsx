@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import "./styles.scss";
 import { ICategoriesProps } from "./types";
 import { TiTick } from "react-icons/ti";
-import { cutStr } from "../../utils/index.";
+import { conditionClassName, cutStr } from "../../utils/index.";
 import { GrPowerReset } from "react-icons/gr";
 
 export const Categories: React.FC<ICategoriesProps> = ({
@@ -61,7 +61,7 @@ export const Categories: React.FC<ICategoriesProps> = ({
         <div
           className={
             "categories__wrapper " +
-            (isOpened ? "categories__wrapper_opened" : "")
+            conditionClassName("categories__wrapper_opened", isOpened)
           }
         >
           {allCategoriesArr

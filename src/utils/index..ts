@@ -27,3 +27,10 @@ export const biggestPrice = (arr: IBook[]) => {
 
   return biggestPriceValue;
 };
+
+export const conditionClassName = (
+  className: string,
+  condition: boolean
+): string => {
+  return condition ? className : "";
+};

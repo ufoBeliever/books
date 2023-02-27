@@ -9,14 +9,14 @@
   &__select {
     height: 30px;
     padding: 0 5px;
-    background: #fffdfd;
+    background: var(--white);
 
-    border: 1px solid #ebe6e8;
+    border: 1px solid var(--gray-2);
     border-radius: 10px;
     transition: background 0.3s;
 
     &:hover {
-      background: rgb(242, 242, 242);
+      background: var(--gray);
     }
 
     cursor: pointer;

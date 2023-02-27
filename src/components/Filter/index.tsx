@@ -1,6 +1,7 @@
 import React from "react";
 import { IFilterProps } from "./types";
 import "./styles.scss";
+import { conditionClassName } from "../../utils/index.";
 
 export const Filter: React.FC<IFilterProps> = ({
   setFilter,
@@ -14,12 +15,10 @@ export const Filter: React.FC<IFilterProps> = ({
           <button
             key={i}
             onClick={() => setFilter(e)}
-            className={[
-              "filter__button",
-              e === value ? "filter__button_checked" : null,
-            ]
-              .filter((e) => e)
-              .join(" ")}
+            className={
+              "filter__button " +
+              conditionClassName("filter__button_checked", e === value)
+            }
           >
             {e ? e : " none"}
           </button>

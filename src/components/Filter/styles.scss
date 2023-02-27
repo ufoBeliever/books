@@ -12,11 +12,11 @@
     transition: background 0.3s;
 
     &:hover {
-      background: rgb(242, 242, 242);
+      background: var(--gray);
     }
 
     &_checked {
-      border-color: #514d4c;
+      border-color: var(--brown);
     }
   }
 }
