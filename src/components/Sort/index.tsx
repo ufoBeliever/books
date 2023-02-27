@@ -7,7 +7,11 @@ export const Sort: React.FC<ISortProps> = ({ value, setValue }) => {
       <span className="sort__title">Sort by</span>
       <select
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => {
+          if (e.target.value === "Relevance" || e.target.value === "Newest") {
+            setValue(e.target.value);
+          }
+        }}
         className="sort__select"
       >
         <option>Newest</option>

@@ -1,54 +1,48 @@
 import React, { useEffect, useState } from "react";
 import { BooksWrapper, Categories, Filter, Input, Sort } from "./components";
 import { IBook } from "./models/types";
-import {
-  biggestPrice,
-  bringDateToValid,
-  fetchAllElements,
-  hasArrayIntersection,
-} from "./utils/index.";
+import { biggestPrice, hasArrayIntersection } from "./utils/index.";
 import { URL } from "./consts/index";
 import { Slider } from "antd";
 import currencyFormatter from "currency-formatter";
+import axios from "axios";
 
 function App() {
   const [searchString, setSearchString] = useState<string>("");
-  const [sortBy, setSortBy] = useState<string>("Relevance");
   const [responseData, setResponseData] = useState<IBook[]>([]);
-  const [allCategories, setALLCategories] = useState<Set<string> | null>(null);
+  const [availableCategories, setAvailableCategories] =
+    useState<Set<string> | null>(null);
   const [currentCategories, setCurrentCategories] = useState<string[]>([]);
   const [filteredData, setFilteredData] = useState<IBook[]>([]);
-
-  const [minCurrentPrice, setMinCurrentPrice] = useState<number>(0);
-  const [maxCurrentPrice, setMaxCurrentPrice] = useState<number>(Infinity);
-
-  const [maxPrice, setMaxPrice] = useState<number>(0);
-  const [currency, setCurrency] = useState<string>("");
   const [currentEBooksFilter, setCurrentEBooksFilter] = useState<
     "free-ebooks" | "paid-ebooks" | ""
   >("");
+  const [sortBy, setSortBy] = useState<"Relevance" | "Newest">("Relevance");
+
+  const [maxPrice, setMaxPrice] = useState<number>(0);
+
+  const [minCurrentPrice, setMinCurrentPrice] = useState<number>(0);
+  const [maxCurrentPrice, setMaxCurrentPrice] = useState<number>(0);
+  const [currency, setCurrency] = useState("");
 
   useEffect(() => {
     if (searchString) {
-      fetchAllElements(
-        `${URL}?key=${process.env.REACT_APP_API_KEY}&q=${searchString}`,
-        40
-      ).then((e: IBook[]) => {
-        const categories = [
-          ...e.map((e) => e.volumeInfo.categories).filter((e) => e),
-        ];
-        let categoriesList: string[] = [];
-
-        for (let el of categories) {
-          categoriesList = [...categoriesList, ...(el ? el : [])];
-        }
-        setALLCategories(new Set([...categoriesList]));
-        setResponseData(e);
-      });
+      axios
+        .get(
+          `${URL}?key=${process.env.REACT_APP_API_KEY}&q=${searchString}&maxResults=40`
+        )
+        .then(({ data }) => {
+          setResponseData(data.items);
+        });
     }
   }, [searchString]);
 
   useEffect(() => {
+    setCurrentCategories([]);
+    setCurrentEBooksFilter("");
+    setSortBy("Relevance");
+    setMinCurrentPrice(0);
+
     for (let book of responseData) {
       if (
         book.saleInfo?.listPrice?.currencyCode !== currency &&
@@ -58,16 +52,24 @@ function App() {
         break;
       }
     }
-  }, [responseData, currency]);
 
-  useEffect(() => {
-    if (maxPrice && maxCurrentPrice > maxPrice) {
-      setMaxCurrentPrice(maxPrice);
+    let tempCategories: string[] = [];
+    for (let book of responseData) {
+      tempCategories = [
+        ...tempCategories,
+        ...(book.volumeInfo.categories ? book.volumeInfo.categories : []),
+      ];
     }
-  }, [maxCurrentPrice, maxPrice]);
+    setAvailableCategories(new Set(tempCategories));
+
+    const maxPrice = biggestPrice(responseData);
+    setMaxPrice(maxPrice);
+    setMaxCurrentPrice(maxPrice);
+  }, [responseData]);
 
   useEffect(() => {
     let filteredData: IBook[] = [];
+
     if (currentCategories.length) {
       for (let el of responseData) {
         if (
@@ -80,68 +82,70 @@ function App() {
     } else {
       filteredData = responseData;
     }
+    switch (currentEBooksFilter) {
+      case "free-ebooks":
+        setMaxPrice(0);
+        filteredData = filteredData.filter(
+          (e) => e.saleInfo?.saleability === "FREE"
+        );
+        break;
+      case "paid-ebooks":
+        setMaxPrice(biggestPrice(responseData));
+        filteredData = filteredData.filter(
+          (e) => e.saleInfo?.listPrice?.amount > 0
+        );
+        break;
+      default:
+        setMaxPrice(biggestPrice(responseData));
+    }
     if (sortBy === "Newest") {
       filteredData = [
         ...filteredData
           .filter((e) => e.volumeInfo.publishedDate)
           .sort((el1, el2) => {
             return (
-              new Date(
-                bringDateToValid(el2.volumeInfo.publishedDate)
-              ).getTime() -
-              new Date(bringDateToValid(el1.volumeInfo.publishedDate)).getTime()
+              new Date(el2.volumeInfo.publishedDate).getTime() -
+              new Date(el1.volumeInfo.publishedDate).getTime()
             );
           }),
         ...filteredData.filter((e) => !e.volumeInfo.publishedDate),
       ];
     }
 
-    switch (currentEBooksFilter) {
-      case "free-ebooks":
-        setMaxCurrentPrice(0);
-        filteredData = filteredData.filter(
-          (e) => e.saleInfo?.saleability === "FREE"
-        );
-
-        break;
-      case "paid-ebooks":
-        setMaxCurrentPrice(biggestPrice(filteredData));
-        filteredData = filteredData.filter(
-          (e) => e.saleInfo?.listPrice?.amount
-        );
-        break;
-      default:
-        setMaxCurrentPrice(biggestPrice(filteredData));
-    }
-
-    setMaxPrice(biggestPrice(filteredData));
-    if (minCurrentPrice === 0 && maxCurrentPrice === maxPrice) {
-      setFilteredData(filteredData);
-    } else {
-      setFilteredData(
-        filteredData.filter((e) => {
+    if (maxPrice) {
+      if (!(maxPrice === maxCurrentPrice && minCurrentPrice === 0)) {
+        filteredData = filteredData.filter((e) => {
+          const elementPrice = e.saleInfo?.listPrice?.amount;
           return (
-            e.saleInfo.listPrice?.amount <= maxCurrentPrice &&
-            e.saleInfo.listPrice?.amount >= minCurrentPrice
+            elementPrice >= minCurrentPrice && elementPrice <= maxCurrentPrice
           );
-        })
-      );
+        });
+      }
     }
+    setFilteredData(filteredData);
   }, [
-    currentEBooksFilter,
-    sortBy,
     currentCategories,
     responseData,
-    maxCurrentPrice,
+    currentEBooksFilter,
+    sortBy,
     minCurrentPrice,
-    allCategories,
+    maxCurrentPrice,
     maxPrice,
   ]);
 
   return (
     <div className="App">
       <Input onSubmit={setSearchString} />
-
+      {availableCategories && (
+        <>
+          <Categories
+            allCategories={availableCategories}
+            currentCategories={currentCategories}
+            setCurrentCategories={setCurrentCategories}
+          />
+          <Sort value={sortBy} setValue={setSortBy} />
+        </>
+      )}
       <Filter
         allValues={["free-ebooks", "paid-ebooks", ""]}
         value={currentEBooksFilter}
@@ -164,17 +168,7 @@ function App() {
           {currencyFormatter.format(maxCurrentPrice, { code: currency })}
         </>
       )}
-      {allCategories && (
-        <>
-          <Categories
-            allCategories={allCategories}
-            currentCategories={currentCategories}
-            setCurrentCategories={setCurrentCategories}
-          />
-          <Sort value={sortBy} setValue={setSortBy} />
-        </>
-      )}
-      <BooksWrapper responseData={filteredData} />
+      <BooksWrapper data={filteredData} />
     </div>
   );
 }

@@ -1,12 +1,4 @@
-import axios from "axios";
 import { IBook } from "../models/types";
-
-export const fetchAllElements = async (url: string, limit: number) => {
-  url += `&maxResults=${limit}`;
-
-  const { data } = await axios.get(url);
-  return data.items;
-};
 
 export const cutStr = (string: string, count: number) => {
   return string.length > count ? string.slice(0, count).trim() + "..." : string;
@@ -34,11 +26,4 @@ export const biggestPrice = (arr: IBook[]) => {
   }
 
   return biggestPriceValue;
-};
-
-export const bringDateToValid = (date: string): string => {
-  if (isNaN(Date.parse(date))) {
-    return date.split("-").filter((e) => e.length === 4)[0];
-  }
-  return date;
 };
