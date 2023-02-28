@@ -20,7 +20,7 @@ export const Filter: React.FC<IFilterProps> = ({
               conditionClassName("filter__button_checked", e === value)
             }
           >
-            {e ? e : " none"}
+            {e ? e : " all"}
           </button>
         );
       })}
