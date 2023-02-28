@@ -64,33 +64,41 @@ export const Categories: React.FC<ICategoriesProps> = ({
             conditionClassName("categories__wrapper_opened", isOpened)
           }
         >
-          {allCategoriesArr
-            .sort((a, b) => {
-              if (a < b) {
-                return -1;
-              }
-              if (a > b) {
-                return 1;
-              }
-              return 0;
-            })
-            .map((e, i) => {
-              const isItemSelected = isSelected(e);
-              return (
-                <button
-                  key={i}
-                  title={e}
-                  onClick={() => setCategory(e)}
-                  className={
-                    "categories__item " +
-                    (isItemSelected ? "categories__item_selected" : "")
-                  }
-                >
-                  {cutStr(e, 17)}
-                  {isItemSelected && <TiTick size="14px" color="#8E2912" />}
-                </button>
-              );
-            })}
+          {allCategories.size ? (
+            allCategoriesArr
+              .sort((a, b) => {
+                if (a < b) {
+                  return -1;
+                }
+                if (a > b) {
+                  return 1;
+                }
+                return 0;
+              })
+              .map((e, i) => {
+                const isItemSelected = isSelected(e);
+                return (
+                  <button
+                    key={i}
+                    onClick={() => setCategory(e)}
+                    className={
+                      "categories__item " +
+                      conditionClassName(
+                        "categories__item_selected",
+                        isItemSelected
+                      )
+                    }
+                  >
+                    {cutStr(e, 17)}
+                    {isItemSelected && <TiTick size="14px" color="#8E2912" />}
+                  </button>
+                );
+              })
+          ) : (
+            <button className={"categories__item"}>
+              No categories available
+            </button>
+          )}
         </div>
       </div>
     </div>

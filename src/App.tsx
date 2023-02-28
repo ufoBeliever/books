@@ -92,6 +92,52 @@ function App() {
   };
 
   useEffect(() => {
+    if (data) {
+      let dataWithoutCategories: IBook[] = data;
+
+      switch (currentEBooksFilter) {
+        case "free-ebooks":
+          setMaxPrice(0);
+          dataWithoutCategories = dataWithoutCategories.filter(
+            (e) => e.saleInfo?.saleability === "FREE"
+          );
+          break;
+        case "paid-ebooks":
+          setMaxPrice(biggestPrice(data));
+          dataWithoutCategories = dataWithoutCategories.filter(
+            (e) => e.saleInfo?.listPrice?.amount > 0
+          );
+          break;
+        default:
+          setMaxPrice(biggestPrice(data));
+      }
+
+      if (maxPrice) {
+        if (!(maxPrice === maxCurrentPrice && minCurrentPrice === 0)) {
+          dataWithoutCategories = dataWithoutCategories.filter((e) => {
+            const elementPrice = e.saleInfo?.listPrice?.amount;
+            const isFree = e.saleInfo?.saleability === "FREE";
+            return (
+              (isFree && minCurrentPrice === 0) ||
+              (elementPrice >= minCurrentPrice &&
+                elementPrice <= maxCurrentPrice)
+            );
+          });
+        }
+      }
+
+      let tempCategories: string[] = [];
+      for (let book of dataWithoutCategories) {
+        tempCategories = [
+          ...tempCategories,
+          ...(book.volumeInfo.categories ? book.volumeInfo.categories : []),
+        ];
+      }
+      setAvailableCategories(new Set(tempCategories));
+    }
+  }, [data, currentEBooksFilter, minCurrentPrice, maxCurrentPrice, maxPrice]);
+
+  useEffect(() => {
     setCurrentCategories([]);
     setCurrentEBooksFilter("");
     setSortBy("Relevance");
@@ -107,15 +153,6 @@ function App() {
           break;
         }
       }
-
-      let tempCategories: string[] = [];
-      for (let book of data) {
-        tempCategories = [
-          ...tempCategories,
-          ...(book.volumeInfo.categories ? book.volumeInfo.categories : []),
-        ];
-      }
-      setAvailableCategories(new Set(tempCategories));
 
       const maxPrice = biggestPrice(data);
       setMaxPrice(maxPrice);
@@ -250,10 +287,12 @@ function App() {
           }
         >
           <div className="filters__small">
-            {!!availableCategories?.size && (
+            {!!data && (
               <>
                 <Categories
-                  allCategories={availableCategories}
+                  allCategories={
+                    availableCategories ? availableCategories : new Set()
+                  }
                   currentCategories={currentCategories}
                   setCurrentCategories={setCurrentCategories}
                 />
